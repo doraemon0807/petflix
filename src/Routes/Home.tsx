@@ -112,6 +112,23 @@ const Row = styled(motion.div)`
   gap: 5px;
   position: absolute;
   width: 100%;
+  padding: 0 46px;
+`;
+
+const RowArrow = styled.div<{ arrowSide: string }>`
+  width: 40px;
+  height: 200px;
+  position: absolute;
+  z-index: 2;
+  background-color: rgba(130, 130, 130, 0.5);
+  top: 50px;
+  border-radius: ${(props) =>
+    props.arrowSide === "left" ? "5px 0 0 5px" : " 0 5px 5px 0"};
+  ${(props) => props.arrowSide}:0;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(190, 190, 190, 0.8);
+  }
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -120,7 +137,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-position: center;
   height: 200px;
   font-size: 64px;
-  border-radius: 5px;
+  border-radius: 2px;
   cursor: pointer;
   &:first-child {
     transform-origin: center left;
@@ -183,14 +200,23 @@ function Home() {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [playAnimation, setPlayAnimation] = useState(false);
+  const [back, setBack] = useState(false);
 
-  const increaseIndex = () => {
+  const changeIndex = (index: number) => {
     if (nowPlayingData) {
       if (leaving) return;
       setLeaving(true);
       const totalMovies = nowPlayingData.results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIndex((prev) => {
+        if (index > 0) {
+          setBack(false);
+          return prev === maxIndex ? 0 : prev + index;
+        } else {
+          setBack(true);
+          return prev === 0 ? maxIndex : prev + index;
+        }
+      });
     }
   };
 
@@ -219,6 +245,16 @@ function Home() {
     },
   };
 
+  const rowSliderVariants = {
+    initial: (back: boolean) => ({
+      x: back ? -(width + 5) : width + 5,
+    }),
+    animate: { x: 0 },
+    exit: (back: boolean) => ({
+      x: back ? width + 5 : -(width + 5),
+    }),
+  };
+
   return (
     <Wrapper>
       {nowPlayingLoading ? (
@@ -226,7 +262,6 @@ function Home() {
       ) : (
         <>
           <Banner
-            onClick={increaseIndex}
             bgphoto={makeImagePath(
               nowPlayingData?.results[0].backdrop_path || ""
             )}
@@ -263,13 +298,33 @@ function Home() {
           </Banner>
           <Sliders>
             <Slider>
-              <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-                <SliderTitle>Hello</SliderTitle>
+              <AnimatePresence
+                initial={false}
+                onExitComplete={toggleLeaving}
+                custom={back}
+              >
+                <SliderTitle>Now Playing</SliderTitle>
+                <RowArrow
+                  key="arrowLeft"
+                  arrowSide="left"
+                  onClick={() => changeIndex(-1)}
+                >
+                  A
+                </RowArrow>
+                <RowArrow
+                  key="ArrowRight"
+                  arrowSide="right"
+                  onClick={() => changeIndex(1)}
+                >
+                  B
+                </RowArrow>
                 <Row
                   key={index}
-                  initial={{ x: width + 5 }}
-                  animate={{ x: 0 }}
-                  exit={{ x: -width - 5 }}
+                  variants={rowSliderVariants}
+                  custom={back}
+                  initial={"initial"}
+                  animate={"animate"}
+                  exit={"exit"}
                   transition={{ type: "tween", duration: 1 }}
                 >
                   {nowPlayingData?.results

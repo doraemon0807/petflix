@@ -1,7 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import MovieInfo from "./Components/MovieInfo";
-import Home from "./Routes/Home";
+import BigInfo from "./Components/BigInfo";
+import MovieInfo from "./Components/BigInfo";
+import Home from "./Routes/Movies";
 import Search from "./Routes/Search";
 import Tv from "./Routes/Tv";
 
@@ -16,10 +17,22 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home />,
+      },
+      {
+        path: "movies",
+        element: <Home />,
         children: [
           {
-            path: "movies/:movieId",
-            element: <MovieInfo />,
+            path: "nowPlaying/:showId",
+            element: <BigInfo />,
+          },
+          {
+            path: "popular/:showId",
+            element: <BigInfo />,
+          },
+          {
+            path: "upcoming/:showId",
+            element: <BigInfo />,
           },
         ],
       },
@@ -27,14 +40,46 @@ const router = createBrowserRouter([
       {
         path: "tv",
         element: <Tv />,
-      },
-      {
-        path: "tv/:tvId",
-        element: <Tv />,
+        children: [
+          {
+            path: "onAir/:showId",
+            element: <BigInfo />,
+          },
+          {
+            path: "popular/:showId",
+            element: <BigInfo />,
+          },
+          {
+            path: "topRated/:showId",
+            element: <BigInfo />,
+          },
+        ],
       },
       {
         path: "search",
         element: <Search />,
+        children: [
+          {
+            path: "movies",
+            element: <Search />,
+            children: [
+              {
+                path: ":showId",
+                element: <BigInfo />,
+              },
+            ],
+          },
+          {
+            path: "tv",
+            element: <Search />,
+            children: [
+              {
+                path: ":showId",
+                element: <BigInfo />,
+              },
+            ],
+          },
+        ],
       },
     ],
   },

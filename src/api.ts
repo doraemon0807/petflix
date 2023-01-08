@@ -3,7 +3,7 @@ import axios from "axios";
 const API_KEY = "3aa30d95afc8ae6f47f61c77f67449d7";
 const BASE_PATH = "https://api.themoviedb.org/3";
 
-export interface IMovie {
+export interface IShow {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -49,19 +49,40 @@ export interface ProductionCompany {
   origin_country: string;
 }
 
-export interface IGetMovieResult {
+export interface IGetShowResult {
   dates: {
     maximum: Date;
     minimum: Date;
   };
   page: number;
-  results: IMovie[];
+  results: IShow[];
   total_pages: number;
   total_results: number;
+}
+
+export interface IPropData {
+  data?: IGetShowResult;
+  title?: string;
+  sliderType: string;
+  rowType?: string;
 }
 
 export function getMovies(category: string) {
   return axios
     .get(`${BASE_PATH}/movie/${category}?api_key=${API_KEY}`)
+    .then((res) => res.data);
+}
+
+export function getTvs(category: string) {
+  return axios
+    .get(`${BASE_PATH}/tv/${category}?api_key=${API_KEY}&language=en-US`)
+    .then((res) => res.data);
+}
+
+export function getSearch(type: string, keyword: string) {
+  return axios
+    .get(
+      `${BASE_PATH}/search/${type}?api_key=${API_KEY}&language=en-US&query=${keyword}`
+    )
     .then((res) => res.data);
 }

@@ -2,13 +2,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "react-query";
 import {
   Link,
+  useLocation,
   useMatch,
   useNavigate,
   useOutletContext,
   useParams,
 } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { getMovies, IGetMovieResult, IMovie } from "../api";
+import { getMovies, getTvs, IGetShowResult, IShow } from "../api";
+import { getDataSliderType } from "../atom";
 import { makeImagePath } from "../utils";
 
 const Overlay = styled(motion.div)`
@@ -148,6 +151,7 @@ const BigRating = styled.div<{ rating: number }>`
   align-items: center;
   width: 50px;
   height: 100%;
+  min-height: 30px;
   border-radius: 5px;
   background-color: ${(props) =>
     props.rating > 7 ? "#44bd32" : props.rating > 4 ? "#fa8231" : "#eb3b5a"};
@@ -162,12 +166,9 @@ const BigYear = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const BigGenres = styled.div<{ genreCount: any }>`
+const BigGenres = styled.div<{ genreCount: number }>`
   display: grid;
-  /* grid-template-columns: repeat(2, 2fr); */
-  grid-template-columns: repeat(
-    ${(props) => (props.genreCount < 2 ? "1, 1fr" : "2, 2fr")}
-  );
+  grid-template-columns: ${(props) => (props.genreCount <= 2 ? "" : "1fr 1fr")};
   column-gap: 10px;
   padding: 0px 10px;
 `;
@@ -180,42 +181,57 @@ const BigGenre = styled.span`
   font-size: 12px;
   font-weight: 600;
   color: rgba(220, 220, 220, 0.9);
+  text-align: center;
 `;
 
-function MovieInfo() {
+function BigInfo() {
   const navigate = useNavigate();
-  const onOverlayClick = () => navigate("/");
+  const onOverlayClick = () => navigate(-1);
 
-  const { movieId } = useParams();
+  const location = useLocation();
 
-  const { data: detailData, isLoading: detailLoading } = useQuery<IMovie>(
-    ["movies", "detail"],
-    () => getMovies(movieId + "")
+  const { showId } = useParams();
+
+  const sliderType = useRecoilValue(getDataSliderType);
+
+  const { data: detailData, isLoading: detailLoading } = useQuery<IShow>(
+    ["show", "detail"],
+    () =>
+      sliderType === "movies" ? getMovies(showId + "") : getTvs(showId + "")
   );
 
-  const nowPlayingData = useOutletContext<IGetMovieResult>();
+  const data = useOutletContext<IGetShowResult>();
 
-  const clickedMovie =
-    movieId && nowPlayingData?.results.find((movie) => movie.id === +movieId!);
+  const clickedShow =
+    showId && data?.results.find((show) => show.id === +showId!);
 
-  console.log(detailData);
+  const logoPath = () => {
+    if (detailData?.production_companies.length === 0) {
+      return false;
+    } else if (detailData?.production_companies[0].logo_path === null) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
+  console.log(detailData?.genres.length);
   return (
     <AnimatePresence>
-      {movieId && (
+      {showId && (
         <>
           <Overlay
             onClick={onOverlayClick}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           />
-          <BigMovie layoutId={movieId}>
-            {clickedMovie && (
+          <BigMovie layoutId={location.pathname}>
+            {clickedShow && (
               <>
                 <BigCover
                   style={{
                     backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                      clickedMovie.backdrop_path,
+                      clickedShow.backdrop_path,
                       "w500"
                     )})`,
                   }}
@@ -235,19 +251,21 @@ function MovieInfo() {
                         <BigPic
                           style={{
                             backgroundImage: `url(${makeImagePath(
-                              clickedMovie.poster_path,
+                              clickedShow.poster_path,
                               "w200"
                             )})`,
                           }}
                         />
-                        <BigCompany
-                          style={{
-                            backgroundImage: `url(${makeImagePath(
-                              detailData?.production_companies[0].logo_path!,
-                              "w200"
-                            )})`,
-                          }}
-                        />
+                        {logoPath() ? (
+                          <BigCompany
+                            style={{
+                              backgroundImage: `url(${makeImagePath(
+                                detailData?.production_companies[0].logo_path!,
+                                "w200"
+                              )})`,
+                            }}
+                          />
+                        ) : null}
 
                         <BigWebsite
                           as="a"
@@ -259,31 +277,50 @@ function MovieInfo() {
                       </BigLeftSection>
                       <BigRightSection>
                         <BigTitle>
-                          <span>{clickedMovie.title}</span>
+                          <span>{clickedShow.title}</span>
                         </BigTitle>
                         <BigInfoTop>
                           <BigInfoBox>
                             <BigInfoTitle>Score</BigInfoTitle>
-                            <BigRating rating={clickedMovie.vote_average}>
-                              {clickedMovie.vote_average}
+                            <BigRating rating={clickedShow.vote_average}>
+                              {clickedShow.vote_average}
                             </BigRating>
                           </BigInfoBox>
                           <BigInfoBox>
                             <BigInfoTitle>Year</BigInfoTitle>
                             <BigYear>
-                              {String(detailData?.release_date).slice(0, 4)}
+                              {sliderType === "movies"
+                                ? String(detailData?.release_date).slice(0, 4)
+                                : String(detailData?.first_air_date).slice(
+                                    0,
+                                    4
+                                  )}
                             </BigYear>{" "}
                           </BigInfoBox>
                           <BigInfoBox>
                             <BigInfoTitle>Genres</BigInfoTitle>
-                            <BigGenres genreCount={detailData?.genres.length}>
-                              {detailData?.genres.slice(0, 4).map((genre) => (
-                                <BigGenre key={genre.id}>{genre.name}</BigGenre>
-                              ))}
+                            <BigGenres genreCount={detailData?.genres.length!}>
+                              {detailData?.genres.length === 0 ? (
+                                <BigGenre>None</BigGenre>
+                              ) : (
+                                detailData?.genres
+                                  .slice(0, 4)
+                                  .map((genre) => (
+                                    <BigGenre key={genre.id}>
+                                      {genre.name}
+                                    </BigGenre>
+                                  ))
+                              )}
                             </BigGenres>{" "}
                           </BigInfoBox>
                         </BigInfoTop>
-                        <BigOverview>{clickedMovie.overview}</BigOverview>
+                        <BigOverview>
+                          {clickedShow.overview.length === 0
+                            ? "No overview available"
+                            : clickedShow.overview.length > 550
+                            ? clickedShow.overview.substring(0, 550) + "..."
+                            : clickedShow.overview}
+                        </BigOverview>
                       </BigRightSection>
                     </>
                   )}
@@ -297,4 +334,4 @@ function MovieInfo() {
   );
 }
 
-export default MovieInfo;
+export default BigInfo;

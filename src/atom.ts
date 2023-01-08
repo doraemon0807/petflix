@@ -14,3 +14,8 @@ export const getDataSliderType = atom({
   key: "sliderType",
   default: "",
 });
+
+export const searchDataState = atom({
+  key: "searchData",
+  default: "",
+});

@@ -54,7 +54,7 @@ const Item = styled.li`
   text-shadow: 1px 1px ${(props) => props.theme.black.lighter};
 `;
 
-const Underbar = styled(motion.span)`
+export const Underbar = styled(motion.span)`
   position: absolute;
   bottom: -12px;
   left: 2px;
@@ -156,10 +156,10 @@ function Header() {
   }, [scrollY, navAnimation]);
 
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<IForm>();
+  const { register, handleSubmit, setValue } = useForm<IForm>();
   const onValid = ({ keyword }: IForm) => {
-    console.log(keyword);
-    navigate(`/search?keyword=${keyword}`);
+    navigate(`/search/movies?keyword=${keyword}`);
+    setValue("keyword", "");
   };
 
   return (

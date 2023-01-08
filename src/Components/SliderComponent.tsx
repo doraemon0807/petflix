@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { useState } from "react";
@@ -62,7 +62,7 @@ const RowArrow = styled.div<{ arrowSide: string }>`
   }
 `;
 
-const Box = styled(motion.div)<{ bgphoto: string }>`
+export const Box = styled(motion.div)<{ bgphoto: string }>`
   background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center;
@@ -70,15 +70,9 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   font-size: 64px;
   border-radius: 2px;
   cursor: pointer;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
 `;
 
-const Info = styled(motion.div)`
+export const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
   opacity: 0;
@@ -93,7 +87,7 @@ const Info = styled(motion.div)`
 
 const offset = 6;
 
-const boxVariants = {
+export const boxVariants = {
   normal: {
     scale: 1,
   },
@@ -109,7 +103,7 @@ const boxVariants = {
   },
 };
 
-const infoVariants = {
+export const infoVariants = {
   hover: {
     opacity: 1,
     transition: {

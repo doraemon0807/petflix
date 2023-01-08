@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import BigInfo from "./Components/BigInfo";
-import MovieInfo from "./Components/BigInfo";
+import GridComponent from "./Components/GridComponent";
 import Home from "./Routes/Movies";
 import Search from "./Routes/Search";
 import Tv from "./Routes/Tv";
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "movies",
-            element: <Search />,
+            element: <GridComponent />,
             children: [
               {
                 path: ":showId",
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
           },
           {
             path: "tv",
-            element: <Search />,
+            element: <GridComponent />,
             children: [
               {
                 path: ":showId",

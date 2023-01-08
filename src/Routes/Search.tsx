@@ -1,9 +1,10 @@
 import { useQuery } from "react-query";
-import { useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useMatch } from "react-router-dom";
 import { getSearch, IGetShowResult } from "../api";
 import { useEffect } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import { Underbar } from "../Components/Header";
 
 const Loader = styled.div`
   height: 20vh;
@@ -12,20 +13,40 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Box = styled(motion.div)<{ bgphoto: string }>`
-  background-image: url(${(props) => props.bgphoto});
-  background-size: cover;
-  background-position: center;
-  height: 200px;
-  font-size: 64px;
-  border-radius: 2px;
-  cursor: pointer;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
+const SearchWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const SearchHeader = styled.div`
+  margin: 100px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  margin-bottom: 20px;
+`;
+
+const SearchTitle = styled.h2`
+  font-size: 36px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+`;
+
+const SearchTypeTabs = styled.div`
+  display: flex;
+`;
+
+const SearchTypeTab = styled.div`
+  font-size: 22px;
+  display: flex;
+  margin-right: 20px;
+  padding: 10px;
+  position: relative;
+`;
+
+const SearchUnderbar = styled(Underbar)`
+  bottom: 0;
 `;
 
 function Search() {
@@ -42,20 +63,48 @@ function Search() {
       return getSearch("tv", keyword || "");
     });
 
+  const searchMovieMatch = location.pathname.includes("/search/movies");
+  const searchTvMatch = location.pathname.includes("/search/tv");
+
   return (
     <>
       {searchMovieLoading || searchTvLoading ? (
         <Loader>Loading...</Loader>
       ) : (
-        <div>
-          <header>
-            <span>Movies</span>
-            <span>TV Shows</span>
-          </header>
-          <main>
-            <h1>Search results</h1>
-          </main>
-        </div>
+        <SearchWrapper>
+          <SearchHeader>
+            <SearchTitle>Search results</SearchTitle>
+
+            <SearchTypeTabs>
+              <SearchTypeTab>
+                <Link to={`movies?keyword=${keyword}`}>
+                  Movies (
+                  {searchMovie?.results.length! < searchMovie?.total_results!
+                    ? searchMovie?.results.length + "+"
+                    : searchMovie?.results.length}
+                  )
+                  {searchMovieMatch && (
+                    <SearchUnderbar layoutId="searchUnderbar" />
+                  )}
+                </Link>
+              </SearchTypeTab>
+              <SearchTypeTab>
+                <Link to={`tv?keyword=${keyword}`}>
+                  TV Shows (
+                  {searchTv?.results.length! < searchTv?.total_results!
+                    ? searchTv?.results.length + "+"
+                    : searchTv?.results.length}
+                  )
+                  {searchTvMatch && (
+                    <SearchUnderbar layoutId="searchUnderbar" />
+                  )}
+                </Link>
+              </SearchTypeTab>
+            </SearchTypeTabs>
+          </SearchHeader>
+          {searchMovieMatch && <Outlet context={searchMovie} />}
+          {searchTvMatch && <Outlet context={searchTv} />}
+        </SearchWrapper>
       )}
     </>
   );

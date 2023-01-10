@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { getMovies, getTvs, IGetShowResult, IShow } from "../api";
 import { getDataSliderType } from "../atom";
 import { makeImagePath } from "../utils";
+import Loading from "./Loading";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -251,7 +252,7 @@ function BigInfo() {
 
                 <BigMovieContainer>
                   {detailLoading ? (
-                    <span>Loading...</span>
+                    <Loading></Loading>
                   ) : (
                     <>
                       <BigLeftSection>

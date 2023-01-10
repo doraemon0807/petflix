@@ -3,13 +3,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { getSearch, IGetShowResult } from "../api";
 import styled from "styled-components";
 import { Underbar } from "../Components/Header";
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+import Loading from "../Components/Loading";
 
 const SearchWrapper = styled.div`
   display: flex;
@@ -67,7 +61,7 @@ function Search() {
   return (
     <>
       {searchMovieLoading || searchTvLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <SearchWrapper>
           <SearchHeader>

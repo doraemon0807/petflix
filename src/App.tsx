@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { Outlet, useLocation, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { bigInfoOpenState, searchOpenState } from "./atom";
 import Header from "./Components/Header";
 import disableScroll from "disable-scroll";
 
 function App() {
-  const location = useLocation();
   const param = useParams();
   const setBigInfoOpen = useSetRecoilState(bigInfoOpenState);
   const [searchOpen, setSearchOpen] = useRecoilState(searchOpenState);
@@ -19,7 +18,7 @@ function App() {
       setBigInfoOpen(false);
       disableScroll.off();
     }
-  }, [location]);
+  }, [param.showId, setBigInfoOpen]);
 
   const handleCloseSearch = () => {
     if (!searchOpen) return;

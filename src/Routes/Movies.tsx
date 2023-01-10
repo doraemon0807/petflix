@@ -7,17 +7,10 @@ import BannerComponent from "../Components/Banner";
 import SliderComponent from "../Components/SliderComponent";
 import { useRecoilValue } from "recoil";
 import { bigInfoOpenState } from "../atom";
+import Loading from "../Components/Loading";
 
 const Wrapper = styled.div`
-  height: 200vh;
-  background: black;
-`;
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 100vh;
 `;
 
 const SliderComponents = styled.div`
@@ -48,7 +41,7 @@ function Home() {
   return (
     <Wrapper>
       {nowPlayingLoading || popularLoading || upcomingLoading ? (
-        <Loader>Loading...</Loader>
+        <Loading />
       ) : (
         <>
           <BannerComponent

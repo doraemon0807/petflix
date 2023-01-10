@@ -1,12 +1,12 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { getMovies, getTvs, IGetShowResult } from "../api";
+import { getTvs, IGetShowResult } from "../api";
 
 import { Outlet, useLocation } from "react-router-dom";
 import BannerComponent from "../Components/Banner";
 import SliderComponent from "../Components/SliderComponent";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { movieDataState, tvDataState } from "../atom";
+import { useRecoilValue } from "recoil";
+import { bigInfoOpenState } from "../atom";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -27,12 +27,8 @@ const SliderComponents = styled.div`
 `;
 
 function Home() {
-  const [rowType, setRowType] = useRecoilState(tvDataState);
-
-  const { data: latestData, isLoading: latestLoading } =
-    useQuery<IGetShowResult>(["tv", "latest"], () => {
-      return getTvs("latest");
-    });
+  const bigInfoOpen = useRecoilValue(bigInfoOpenState);
+  const location = useLocation();
 
   const { data: onAirData, isLoading: onAirLoading } = useQuery<IGetShowResult>(
     ["tv", "onAir"],
@@ -53,7 +49,7 @@ function Home() {
 
   return (
     <Wrapper>
-      {onAirLoading || popularLoading || latestLoading ? (
+      {onAirLoading || popularLoading || topRatedLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
@@ -82,9 +78,20 @@ function Home() {
               rowType="popular"
             />
           </SliderComponents>
-          {rowType === "onAir" && <Outlet context={onAirData} />}
-          {rowType === "popular" && <Outlet context={popularData} />}
-          {rowType === "topRated" && <Outlet context={topRatedData} />}
+
+          {bigInfoOpen && (
+            <Outlet
+              context={
+                location.pathname.includes("tv/onAir")
+                  ? onAirData
+                  : location.pathname.includes("tv/popular")
+                  ? popularData
+                  : location.pathname.includes("tv/topRated")
+                  ? topRatedData
+                  : null
+              }
+            />
+          )}
         </>
       )}
     </Wrapper>

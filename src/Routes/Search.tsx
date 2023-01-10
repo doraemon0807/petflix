@@ -1,9 +1,7 @@
 import { useQuery } from "react-query";
-import { Link, Outlet, useLocation, useMatch } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { getSearch, IGetShowResult } from "../api";
-import { useEffect } from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
 import { Underbar } from "../Components/Header";
 
 const Loader = styled.div`

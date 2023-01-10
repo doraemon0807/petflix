@@ -19,3 +19,13 @@ export const searchDataState = atom({
   key: "searchData",
   default: "",
 });
+
+export const searchOpenState = atom({
+  key: "searchOpen",
+  default: false,
+});
+
+export const bigInfoOpenState = atom({
+  key: "bigInfoOpen",
+  default: false,
+});

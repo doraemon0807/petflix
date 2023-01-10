@@ -6,7 +6,12 @@ import { useState } from "react";
 import useWindowDim from "../useWindowDim";
 import { IPropData } from "../api";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { getDataSliderType, movieDataState, tvDataState } from "../atom";
+import {
+  bigInfoOpenState,
+  getDataSliderType,
+  movieDataState,
+  tvDataState,
+} from "../atom";
 
 const Sliders = styled.div`
   width: 100%;
@@ -119,12 +124,14 @@ function SliderComponent(data: IPropData) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [back, setBack] = useState(false);
+  const bigInfoOpen = useRecoilValue(bigInfoOpenState);
 
   const sliderType = useRecoilValue(getDataSliderType);
 
   const changeIndex = (index: number) => {
     if (data.data) {
       if (leaving) return;
+      if (bigInfoOpen) return;
       setLeaving(true);
       const totalShows = data.data.results.length - 1;
       const maxIndex = Math.floor(totalShows / offset) - 1;

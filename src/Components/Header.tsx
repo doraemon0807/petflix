@@ -1,8 +1,10 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useMatch, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { searchOpenState } from "../atom";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -121,29 +123,16 @@ interface IForm {
 }
 
 function Header() {
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useRecoilState(searchOpenState);
 
   const homeMatch = useMatch("");
   const tvMatch = useMatch("tv");
-  const movieMatch = useMatch("movies/:movieId");
 
-  const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
 
   const { scrollY } = useScroll();
 
-  const handleToggleSearch = () => {
-    if (searchOpen) {
-      inputAnimation.start({
-        scaleX: 0,
-      });
-    } else {
-      inputAnimation.start({
-        scaleX: 1,
-      });
-    }
-    setSearchOpen((prev) => !prev);
-  };
+  const handleToggleSearch = () => setSearchOpen((prev) => !prev);
 
   useEffect(() => {
     scrollY.onChange(() => {
@@ -190,7 +179,7 @@ function Header() {
           <Item>
             <Link to="">
               Movies
-              {(homeMatch || movieMatch) && <Underbar layoutId="underbar" />}
+              {homeMatch && <Underbar layoutId="underbar" />}
             </Link>
           </Item>
           <Item>
@@ -224,7 +213,7 @@ function Header() {
             id="search"
             autoFocus={searchOpen}
             initial={{ scaleX: 0 }}
-            animate={inputAnimation}
+            animate={searchOpen ? { scaleX: 1 } : { scaleX: 0 }}
             placeholder="Search for movies or TV shows"
             transition={{ duration: 0.2 }}
           />

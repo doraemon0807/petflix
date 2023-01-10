@@ -1,9 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "react-query";
 import {
-  Link,
   useLocation,
-  useMatch,
   useNavigate,
   useOutletContext,
   useParams,
@@ -190,7 +188,9 @@ const BigGenre = styled.span`
 
 function BigInfo() {
   const navigate = useNavigate();
-  const onOverlayClick = () => navigate(-1);
+  const onOverlayClick = () => {
+    navigate(-1);
+  };
 
   const location = useLocation();
 
@@ -201,7 +201,9 @@ function BigInfo() {
   const { data: detailData, isLoading: detailLoading } = useQuery<IShow>(
     ["show", "detail"],
     () =>
-      sliderType === "movies" ? getMovies(showId + "") : getTvs(showId + "")
+      location.pathname.includes("movies")
+        ? getMovies(showId + "")
+        : getTvs(showId + "")
   );
 
   const data = useOutletContext<IGetShowResult>();

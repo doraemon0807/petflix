@@ -5,8 +5,8 @@ import { getMovies, IGetShowResult } from "../api";
 import { Outlet, useLocation } from "react-router-dom";
 import BannerComponent from "../Components/Banner";
 import SliderComponent from "../Components/SliderComponent";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { movieDataState } from "../atom";
+import { useRecoilValue } from "recoil";
+import { bigInfoOpenState } from "../atom";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -27,7 +27,8 @@ const SliderComponents = styled.div`
 `;
 
 function Home() {
-  const [rowType, setRowType] = useRecoilState(movieDataState);
+  const bigInfoOpen = useRecoilValue(bigInfoOpenState);
+  const location = useLocation();
 
   const { data: nowPlayingData, isLoading: nowPlayingLoading } =
     useQuery<IGetShowResult>(["movies", "nowPlaying"], () => {
@@ -75,9 +76,20 @@ function Home() {
               rowType="upcoming"
             />
           </SliderComponents>
-          {rowType === "nowPlaying" && <Outlet context={nowPlayingData} />}
-          {rowType === "popular" && <Outlet context={popularData} />}
-          {rowType === "upcoming" && <Outlet context={upcomingData} />}
+
+          {bigInfoOpen && (
+            <Outlet
+              context={
+                location.pathname.includes("movies/nowPlaying")
+                  ? nowPlayingData
+                  : location.pathname.includes("movies/popular")
+                  ? popularData
+                  : location.pathname.includes("movies/upcoming")
+                  ? upcomingData
+                  : null
+              }
+            />
+          )}
         </>
       )}
     </Wrapper>

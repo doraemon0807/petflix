@@ -107,8 +107,6 @@ function BannerComponent(data: IPropData) {
     sliderType === "movies" ? setMovieRowType(rowType) : setTvRowType(rowType);
   };
 
-  console.log(data.data?.results);
-
   return (
     <>
       <Banner

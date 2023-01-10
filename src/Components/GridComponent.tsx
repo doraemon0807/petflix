@@ -1,15 +1,13 @@
 import {
-  Navigate,
   Outlet,
   useLocation,
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
-import { getSearchParamsForLocation } from "react-router-dom/dist/dom";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { IGetShowResult } from "../api";
-import { searchDataState } from "../atom";
+import { bigInfoOpenState } from "../atom";
 import { makeImagePath } from "../utils";
 import { Box, boxVariants, Info, infoVariants } from "./SliderComponent";
 
@@ -36,7 +34,7 @@ const GridInfo = styled(Info)`
 
 function GridComponent() {
   const data = useOutletContext<IGetShowResult>();
-  const [category, setCategory] = useRecoilState(searchDataState);
+  const bigInfoOpen = useRecoilValue(bigInfoOpenState);
 
   const location = useLocation();
 
@@ -44,15 +42,13 @@ function GridComponent() {
 
   const onBoxClicked = (id: number) => {
     navigate(`${id}${location.search}`);
-    setCategory(location.pathname.includes("movies") ? "movies" : "tv");
-    console.log(location);
   };
 
   return (
     <>
       <GridWrapper>
         <GridShows>
-          {data?.results.map((show, idx) => (
+          {data?.results.map((show) => (
             <GridBox
               key={show.id}
               layoutId={`${location.pathname}/${show.id}`}
@@ -74,8 +70,8 @@ function GridComponent() {
           ))}
         </GridShows>
       </GridWrapper>
-      {category === "movies" && <Outlet context={data} />}
-      {category === "tv" && <Outlet context={data} />}
+
+      {bigInfoOpen && <Outlet context={data} />}
     </>
   );
 }

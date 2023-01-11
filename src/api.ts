@@ -79,10 +79,10 @@ export function getTvs(category: string) {
     .then((res) => res.data);
 }
 
-export function getSearch(type: string, keyword: string) {
+export function getSearch(type: string, keyword: string, currentPage: number) {
   return axios
     .get(
-      `${BASE_PATH}/search/${type}?api_key=${API_KEY}&language=en-US&query=${keyword}`
+      `${BASE_PATH}/search/${type}?api_key=${API_KEY}&language=en-US&query=${keyword}&page=${currentPage}`
     )
     .then((res) => res.data);
 }

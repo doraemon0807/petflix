@@ -222,8 +222,6 @@ function BigInfo() {
     }
   };
 
-  console.log(location.pathname);
-
   return (
     <AnimatePresence>
       {showId && (

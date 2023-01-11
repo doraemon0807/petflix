@@ -147,7 +147,7 @@ function Header() {
   const navigate = useNavigate();
   const { register, handleSubmit, setValue } = useForm<IForm>();
   const onValid = ({ keyword }: IForm) => {
-    navigate(`/search/movies?keyword=${keyword}`);
+    navigate(`/search/movies?keyword=${keyword}&page=1`);
     setValue("keyword", "");
   };
 

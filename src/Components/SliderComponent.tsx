@@ -1,17 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { makeImagePath } from "../utils";
 import { useState } from "react";
 import useWindowDim from "../useWindowDim";
 import { IPropData } from "../api";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  bigInfoOpenState,
-  getDataSliderType,
-  movieDataState,
-  tvDataState,
-} from "../atom";
+import { useRecoilValue } from "recoil";
+import { bigInfoOpenState } from "../atom";
 import ShowBox from "./ShowBox";
 
 const Sliders = styled.div`

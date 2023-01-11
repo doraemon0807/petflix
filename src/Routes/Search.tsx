@@ -1,5 +1,12 @@
+import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { getSearch, IGetShowResult } from "../api";
 import styled from "styled-components";
 import { Underbar } from "../Components/Header";
@@ -44,16 +51,31 @@ const SearchUnderbar = styled(Underbar)`
 function Search() {
   const location = useLocation();
   const keyword = new URLSearchParams(location.search).get("keyword");
+  const currentPage = new URLSearchParams(location.search).get("page");
 
-  const { data: searchMovie, isLoading: searchMovieLoading } =
-    useQuery<IGetShowResult>(["movie", "search"], () => {
-      return getSearch("movie", keyword || "");
-    });
+  const {
+    data: searchMovie,
+    isLoading: searchMovieLoading,
+    refetch: searchMovieRefetch,
+  } = useQuery<IGetShowResult>(["movie", "search"], () => {
+    return getSearch("movie", keyword || "", +currentPage! || 1);
+  });
 
-  const { data: searchTv, isLoading: searchTvLoading } =
-    useQuery<IGetShowResult>(["tv", "search"], () => {
-      return getSearch("tv", keyword || "");
-    });
+  useEffect(() => {
+    searchMovieRefetch();
+  }, [location]);
+
+  const {
+    data: searchTv,
+    isLoading: searchTvLoading,
+    refetch: searchTvRefetch,
+  } = useQuery<IGetShowResult>(["tv", "search"], () => {
+    return getSearch("tv", keyword || "", +currentPage! || 1);
+  });
+
+  useEffect(() => {
+    searchTvRefetch();
+  }, [location]);
 
   const searchMovieMatch = location.pathname.includes("/search/movies");
   const searchTvMatch = location.pathname.includes("/search/tv");
@@ -69,24 +91,16 @@ function Search() {
 
             <SearchTypeTabs>
               <SearchTypeTab>
-                <Link to={`movies?keyword=${keyword}`}>
-                  Movies (
-                  {searchMovie?.results.length! < searchMovie?.total_results!
-                    ? searchMovie?.results.length + "+"
-                    : searchMovie?.results.length}
-                  )
+                <Link to={`movies?keyword=${keyword}&page=1`}>
+                  Movies ({searchMovie?.total_results!})
                   {searchMovieMatch && (
                     <SearchUnderbar layoutId="searchUnderbar" />
                   )}
                 </Link>
               </SearchTypeTab>
               <SearchTypeTab>
-                <Link to={`tv?keyword=${keyword}`}>
-                  TV Shows (
-                  {searchTv?.results.length! < searchTv?.total_results!
-                    ? searchTv?.results.length + "+"
-                    : searchTv?.results.length}
-                  )
+                <Link to={`tv?keyword=${keyword}&page=1`}>
+                  TV Shows ({searchTv?.total_results!})
                   {searchTvMatch && (
                     <SearchUnderbar layoutId="searchUnderbar" />
                   )}

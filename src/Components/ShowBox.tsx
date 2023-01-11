@@ -1,8 +1,8 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { IGetShowResult, IPropData, IShow } from "../api";
+import { IPropData, IShow } from "../api";
 import { getDataSliderType, movieDataState, tvDataState } from "../atom";
 import { makeImagePath } from "../utils";
 
@@ -12,20 +12,23 @@ export const Box = styled(motion.div)<{ bgphoto: string }>`
   background-position: center;
   height: 200px;
   font-size: 64px;
-  border-radius: 2px;
+  border-radius: 2px 2px 0 0;
   cursor: pointer;
 `;
 
 export const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
   position: relative;
-  top: 200px;
+  opacity: 0;
+  top: 156px;
   width: 100%;
+  border-radius: 0 0 2px 2px;
   h4 {
     text-align: center;
-    font-size: 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 `;
 
@@ -35,7 +38,7 @@ export const boxVariants = {
   },
   hover: {
     scale: 1.3,
-    y: -50,
+    y: -40,
     zIndex: 99,
     transition: {
       delay: 0.3,
@@ -48,6 +51,7 @@ export const boxVariants = {
 export const infoVariants = {
   hover: {
     opacity: 1,
+    y: 38,
     transition: {
       delay: 0.3,
       type: "tween",
@@ -83,7 +87,6 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
         sliderType === "movies"
           ? setMovieRowType(rowType)
           : setTvRowType(rowType);
-        console.log(`/${sliderType}/${rowType}/${show.id}`);
         break;
       case "grid":
         navigate(`${id}${location.search}`);
@@ -91,8 +94,15 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
     }
   };
 
-  const origin = (index: number) => index / (offset || 0 - 1);
-  console.log(`/${data?.sliderType}/${rowType}/${show.id}`);
+  const origin = (index: number, slideGrid: string) => {
+    switch (slideGrid) {
+      case "slide":
+        return index / (offset! - 1);
+      case "grid":
+        return 0.5;
+    }
+  };
+
   return (
     <Box
       layoutId={
@@ -111,9 +121,12 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
       initial="normal"
       whileHover="hover"
       transition={{ type: "tween", duration: 0.2 }}
-      style={{ originX: origin(idx) }}
+      style={{ originX: origin(idx, slideGrid), originY: 1 }}
     >
-      <Info variants={infoVariants}>
+      <Info
+        variants={infoVariants}
+        transition={{ type: "tween", duration: 0.2 }}
+      >
         <h4>{show.title || show.name}</h4>
       </Info>
     </Box>

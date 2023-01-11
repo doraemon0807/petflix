@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { IGetShowResult } from "../api";
 import { bigInfoOpenState } from "../atom";
 import { makeImagePath } from "../utils";
-import { Box, boxVariants, Info, infoVariants } from "./SliderComponent";
+import ShowBox from "./ShowBox";
 
 const GridWrapper = styled.div`
   width: 100%;
@@ -24,49 +24,16 @@ const GridShows = styled.div`
   width: 100%;
 `;
 
-const GridBox = styled(Box)`
-  border-radius: 5px 5px 0 0;
-`;
-
-const GridInfo = styled(Info)`
-  border-radius: 0 0 5px 5px;
-`;
-
 function GridComponent() {
   const data = useOutletContext<IGetShowResult>();
   const bigInfoOpen = useRecoilValue(bigInfoOpenState);
-
-  const location = useLocation();
-
-  const navigate = useNavigate();
-
-  const onBoxClicked = (id: number) => {
-    navigate(`${id}${location.search}`);
-  };
 
   return (
     <>
       <GridWrapper>
         <GridShows>
-          {data?.results.map((show) => (
-            <GridBox
-              key={show.id}
-              layoutId={`${location.pathname}/${show.id}`}
-              bgphoto={
-                show.backdrop_path
-                  ? makeImagePath(show.backdrop_path, "w500")
-                  : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
-              }
-              onClick={() => onBoxClicked(show.id!)}
-              variants={boxVariants}
-              initial="normal"
-              whileHover="hover"
-              transition={{ type: "tween", duration: 0.2 }}
-            >
-              <GridInfo variants={infoVariants}>
-                <h4>{show.title || show.name}</h4>
-              </GridInfo>
-            </GridBox>
+          {data?.results.map((show, idx) => (
+            <ShowBox key={idx} show={show} idx={idx} slideGrid="grid" />
           ))}
         </GridShows>
       </GridWrapper>

@@ -222,6 +222,8 @@ function BigInfo() {
     }
   };
 
+  console.log(location.pathname);
+
   return (
     <AnimatePresence>
       {showId && (
@@ -252,7 +254,7 @@ function BigInfo() {
 
                 <BigMovieContainer>
                   {detailLoading ? (
-                    <Loading></Loading>
+                    <Loading />
                   ) : (
                     <>
                       <BigLeftSection>
@@ -276,13 +278,15 @@ function BigInfo() {
                           />
                         ) : null}
 
-                        <BigWebsite
-                          as="a"
-                          href={detailData?.homepage}
-                          target="_blank"
-                        >
-                          Homepage
-                        </BigWebsite>
+                        {detailData?.homepage !== "" && (
+                          <BigWebsite
+                            as="a"
+                            href={detailData?.homepage}
+                            target="_blank"
+                          >
+                            Homepage
+                          </BigWebsite>
+                        )}
                       </BigLeftSection>
                       <BigRightSection>
                         <BigTitle>

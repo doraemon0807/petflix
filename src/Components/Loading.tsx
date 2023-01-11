@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
-const Loader = styled(motion.div)`
+export const Loader = styled(motion.div)`
   position: absolute;
   top: 0;
   bottom: 0;

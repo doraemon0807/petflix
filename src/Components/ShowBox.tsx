@@ -3,10 +3,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { IPropData, IShow } from "../api";
-import { getDataSliderType, movieDataState, tvDataState } from "../atom";
+import {
+  getDataSliderType,
+  movieDataState,
+  tvDataState,
+  bigInfoOpenState,
+} from "../atom";
 import { makeImagePath } from "../utils";
 
-export const Box = styled(motion.div)<{ bgphoto: string }>`
+const Box = styled(motion.div)<{ bgphoto: string }>`
   background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center;
@@ -16,7 +21,7 @@ export const Box = styled(motion.div)<{ bgphoto: string }>`
   cursor: pointer;
 `;
 
-export const Info = styled(motion.div)`
+const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
   position: relative;
@@ -32,7 +37,7 @@ export const Info = styled(motion.div)`
   }
 `;
 
-export const boxVariants = {
+const boxVariants = {
   normal: {
     scale: 1,
   },
@@ -48,7 +53,7 @@ export const boxVariants = {
   },
 };
 
-export const infoVariants = {
+const infoVariants = {
   hover: {
     opacity: 1,
     y: 38,
@@ -77,6 +82,7 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
   const sliderType = useRecoilValue(getDataSliderType);
   const setMovieRowType = useSetRecoilState(movieDataState);
   const setTvRowType = useSetRecoilState(tvDataState);
+  const bigInfoOpen = useRecoilValue(bigInfoOpenState);
 
   const onBoxClicked = (id: number, rowType: string) => {
     switch (slideGrid) {
@@ -120,8 +126,11 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
       variants={boxVariants}
       initial="normal"
       whileHover="hover"
-      transition={{ type: "tween", duration: 0.2 }}
-      style={{ originX: origin(idx, slideGrid), originY: 1 }}
+      transition={{ type: "tween", duration: 0.3 }}
+      style={{
+        originX: bigInfoOpen ? 0.5 : origin(idx, slideGrid),
+        originY: bigInfoOpen ? 0.5 : 1,
+      }}
     >
       <Info
         variants={infoVariants}

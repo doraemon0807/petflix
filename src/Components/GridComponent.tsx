@@ -19,26 +19,34 @@ const GridShows = styled.div`
 `;
 
 const GridPagesWrapper = styled.div`
-  margin-top: 50px;
+  margin: 50px 0;
   width: 100%;
   height: 50px;
   display: flex;
   justify-content: center;
 `;
 
-const GridPages = styled.div<{ totalPage: number; pageOffset: number }>`
-  display: grid;
-  grid-template-columns: repeat(
-    ${(props) =>
-      props.totalPage > props.pageOffset ? props.pageOffset : props.totalPage},
-    1fr
-  );
-  gap: 20px;
+const GridPages = styled.div<{
+  totalPage: number;
+  pageOffset: number;
+  currentPage: number;
+}>`
+  display: flex;
+  justify-content: center;
   align-items: center;
-
   a {
     text-align: center;
   }
+`;
+
+const GridPage = styled.span`
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: 0 10px;
+  padding: 8px 13px;
+  border: 1px solid ${(props) => props.theme.white.darker};
+  border-radius: 5px;
 `;
 
 function GridComponent() {
@@ -62,27 +70,35 @@ function GridComponent() {
       </GridWrapper>
 
       <GridPagesWrapper>
-        <GridPages totalPage={totalPage} pageOffset={pageOffset}>
+        <GridPages
+          totalPage={totalPage}
+          pageOffset={pageOffset}
+          currentPage={parseInt(currentPage!)}
+        >
+          {parseInt(currentPage!) !== 1 && <GridPage>Prev</GridPage>}
           {Array.apply(null, Array(totalPage))
             .slice(0, 5)
             .map((_, idx) => (
               <Link
                 key={idx}
                 to={`${location.pathname}?keyword=${keyword}&page=${
-                  +currentPage! < 4
+                  +currentPage! < 4 || totalPage! === 4
                     ? idx + 1
                     : +currentPage! > totalPage! - 2
                     ? totalPage! - pageOffset + idx + 1
                     : idx + +currentPage! - 2
                 }`}
               >
-                {+currentPage! < 4
-                  ? idx + 1
-                  : +currentPage! > totalPage! - 2
-                  ? totalPage! - pageOffset + idx + 1
-                  : idx + +currentPage! - 2}
+                <GridPage>
+                  {+currentPage! < 4 || totalPage! <= 5
+                    ? idx + 1
+                    : +currentPage! > totalPage! - 2
+                    ? totalPage! - pageOffset + idx + 1
+                    : idx + +currentPage! - 2}
+                </GridPage>
               </Link>
             ))}
+          {parseInt(currentPage!) !== totalPage! && <GridPage>Next</GridPage>}
         </GridPages>
       </GridPagesWrapper>
 

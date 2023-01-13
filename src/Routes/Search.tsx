@@ -4,6 +4,7 @@ import {
   Link,
   Outlet,
   useLocation,
+  useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -22,8 +23,8 @@ const SearchHeader = styled.div`
   margin: 100px;
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  margin-bottom: 20px;
+  padding: 10px 0;
+  margin-bottom: 10px;
 `;
 
 const SearchTitle = styled.h2`
@@ -49,9 +50,10 @@ const SearchUnderbar = styled(Underbar)`
 `;
 
 function Search() {
-  const location = useLocation();
-  const keyword = new URLSearchParams(location.search).get("keyword");
-  const currentPage = new URLSearchParams(location.search).get("page");
+  const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const keyword = new URLSearchParams(search).get("keyword");
+  const currentPage = new URLSearchParams(search).get("page");
 
   const {
     data: searchMovie,
@@ -63,7 +65,7 @@ function Search() {
 
   useEffect(() => {
     searchMovieRefetch();
-  }, [location]);
+  }, [search]);
 
   const {
     data: searchTv,
@@ -75,10 +77,18 @@ function Search() {
 
   useEffect(() => {
     searchTvRefetch();
-  }, [location]);
+  }, [search]);
 
-  const searchMovieMatch = location.pathname.includes("/search/movies");
-  const searchTvMatch = location.pathname.includes("/search/tv");
+  if (
+    parseInt(currentPage!) < 1 ||
+    (parseInt(currentPage!) !== 1 &&
+      parseInt(currentPage!) > searchMovie?.total_pages!)
+  ) {
+    navigate(-1);
+  }
+
+  const searchMovieMatch = pathname.includes("/search/movies");
+  const searchTvMatch = pathname.includes("/search/tv");
 
   return (
     <>
@@ -87,7 +97,7 @@ function Search() {
       ) : (
         <SearchWrapper>
           <SearchHeader>
-            <SearchTitle>Search results</SearchTitle>
+            <SearchTitle>Search results for: {keyword}</SearchTitle>
 
             <SearchTypeTabs>
               <SearchTypeTab>

@@ -2,9 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import BigInfo from "./Components/BigInfo";
 import GridComponent from "./Components/GridComponent";
-import Home from "./Routes/Movies";
+import Movies from "./Routes/Movies";
 import Search from "./Routes/Search";
-import Tv from "./Routes/Tv";
+import TvShows from "./Routes/TvShows";
 
 export const URL =
   process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL : "/";
@@ -16,11 +16,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Home />,
+        element: <Movies />,
       },
       {
         path: "movies",
-        element: <Home />,
+        element: <Movies />,
         children: [
           {
             path: "nowPlaying/:showId",
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
 
       {
         path: "tv",
-        element: <Tv />,
+        element: <TvShows />,
         children: [
           {
             path: "onAir/:showId",

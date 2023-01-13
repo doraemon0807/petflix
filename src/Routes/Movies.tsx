@@ -10,7 +10,7 @@ import { bigInfoOpenState } from "../atom";
 import Loading from "../Components/Loading";
 
 const Wrapper = styled.div`
-  height: 100vh;
+  height: 190vh;
 `;
 
 const SliderComponents = styled.div`
@@ -19,7 +19,7 @@ const SliderComponents = styled.div`
   }
 `;
 
-function Home() {
+function Movies() {
   const bigInfoOpen = useRecoilValue(bigInfoOpenState);
   const location = useLocation();
 
@@ -89,4 +89,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Movies;

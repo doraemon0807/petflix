@@ -4,6 +4,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { bigInfoOpenState, searchOpenState } from "./atom";
 import Header from "./Components/Header";
 import disableScroll from "disable-scroll";
+import { Helmet } from "react-helmet";
 
 function App() {
   const param = useParams();
@@ -27,6 +28,9 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <title>Petflix - Watch TV Shows Online, Watch Movies Online</title>
+      </Helmet>
       <Header />
       <div onClick={handleCloseSearch}>
         <Outlet />

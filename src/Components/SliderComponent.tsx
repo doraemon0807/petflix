@@ -11,13 +11,8 @@ const Sliders = styled.div`
   width: 100%;
   padding: 0 20px;
   position: relative;
-  top: -100px;
-  &:nth-child(2) {
-    top: 150px;
-  }
-  &:nth-child(3) {
-    top: 400px;
-  }
+  top: -400px;
+  margin-top: 280px;
 `;
 
 const Slider = styled.div`

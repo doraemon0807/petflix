@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "react-query";
 import {
@@ -12,6 +13,13 @@ import { getMovies, getTvs, IGetShowResult, IShow } from "../api";
 import { getDataSliderType } from "../atom";
 import { makeImagePath } from "../utils";
 import Loading from "./Loading";
+import { Link } from "react-router-dom";
+import {
+  ErrorButton,
+  ErrorContainer,
+  ErrorDesc,
+  ErrorTitle,
+} from "../Routes/ErrorPage";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -187,11 +195,33 @@ const BigGenre = styled.span`
   text-align: center;
 `;
 
+const BigErrorWrapper = styled.div<{ bgPhoto: string }>`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)),
+    url(${(props) => props.bgPhoto});
+  background-size: cover;
+`;
+
+const BigErrorContainer = styled(ErrorContainer)``;
+
+const BigErrorTitle = styled(ErrorTitle)``;
+
+const BigErrorDesc = styled(ErrorDesc)``;
+
+const BigErrorButton = styled(ErrorButton)``;
+
 function BigInfo() {
   const navigate = useNavigate();
   const onOverlayClick = () => {
     navigate(-1);
   };
+
+  const [error, setError] = useState(false);
 
   const location = useLocation();
 
@@ -222,6 +252,18 @@ function BigInfo() {
     }
   };
 
+  useEffect(() => {
+    if (!detailData && !detailLoading) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+  }, [detailData, detailLoading]);
+
+  const { data: bigErrorData } = useQuery<IShow>(["movies", "bigError"], () => {
+    return getMovies("349112");
+  });
+
   return (
     <AnimatePresence>
       {showId && (
@@ -232,111 +274,140 @@ function BigInfo() {
             exit={{ opacity: 0 }}
           />
           <BigMovie layoutId={location.pathname}>
-            {clickedShow && (
-              <>
-                <BigCover
-                  style={{
-                    backgroundImage: `linear-gradient(to top, black, transparent), url(${
-                      clickedShow.backdrop_path
-                        ? makeImagePath(clickedShow.backdrop_path, "w500")
-                        : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
-                    })`,
-                  }}
-                />
+            {error ? (
+              <BigErrorWrapper
+                bgPhoto={makeImagePath(bigErrorData?.backdrop_path || "")}
+              >
+                <BigErrorContainer>
+                  <BigErrorTitle>Oops!</BigErrorTitle>
+                  <BigErrorDesc>
+                    Sorry, we can't find that page. You'll find lots to explore
+                    on the home page.
+                  </BigErrorDesc>
 
-                <BigCancel onClick={onOverlayClick}>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512">
-                    <path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z" />
-                  </svg>
-                </BigCancel>
+                  <BigErrorButton>
+                    <Link to="/">
+                      <span>Petflix Home</span>
+                    </Link>
+                  </BigErrorButton>
+                </BigErrorContainer>
+              </BigErrorWrapper>
+            ) : (
+              clickedShow && (
+                <>
+                  <BigCover
+                    style={{
+                      backgroundImage: `linear-gradient(to top, black, transparent), url(${
+                        clickedShow.backdrop_path
+                          ? makeImagePath(clickedShow.backdrop_path, "w500")
+                          : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
+                      })`,
+                    }}
+                  />
 
-                <BigMovieContainer>
-                  {detailLoading ? (
-                    <Loading />
-                  ) : (
-                    <>
-                      <BigLeftSection>
-                        <BigPic
-                          style={{
-                            backgroundImage: `url(${
-                              clickedShow.poster_path
-                                ? makeImagePath(clickedShow.poster_path, "w200")
-                                : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
-                            })`,
-                          }}
-                        />
-                        {logoPath() ? (
-                          <BigCompany
+                  <BigCancel onClick={onOverlayClick}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 352 512"
+                    >
+                      <path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z" />
+                    </svg>
+                  </BigCancel>
+
+                  <BigMovieContainer>
+                    {detailLoading ? (
+                      <Loading />
+                    ) : (
+                      <>
+                        <BigLeftSection>
+                          <BigPic
                             style={{
-                              backgroundImage: `url(${makeImagePath(
-                                detailData?.production_companies[0].logo_path!,
-                                "w200"
-                              )})`,
+                              backgroundImage: `url(${
+                                clickedShow.poster_path
+                                  ? makeImagePath(
+                                      clickedShow.poster_path,
+                                      "w200"
+                                    )
+                                  : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
+                              })`,
                             }}
                           />
-                        ) : null}
+                          {logoPath() ? (
+                            <BigCompany
+                              style={{
+                                backgroundImage: `url(${makeImagePath(
+                                  detailData?.production_companies[0]
+                                    .logo_path!,
+                                  "w200"
+                                )})`,
+                              }}
+                            />
+                          ) : null}
 
-                        {detailData?.homepage !== "" && (
-                          <BigWebsite
-                            as="a"
-                            href={detailData?.homepage}
-                            target="_blank"
-                          >
-                            Homepage
-                          </BigWebsite>
-                        )}
-                      </BigLeftSection>
-                      <BigRightSection>
-                        <BigTitle>
-                          <span>{clickedShow.title || clickedShow.name}</span>
-                        </BigTitle>
-                        <BigInfoTop>
-                          <BigInfoBox>
-                            <BigInfoTitle>Score</BigInfoTitle>
-                            <BigRating rating={clickedShow.vote_average}>
-                              {clickedShow.vote_average}
-                            </BigRating>
-                          </BigInfoBox>
-                          <BigInfoBox>
-                            <BigInfoTitle>Year</BigInfoTitle>
-                            <BigYear>
-                              {sliderType === "movies"
-                                ? String(detailData?.release_date).slice(0, 4)
-                                : String(detailData?.first_air_date).slice(
-                                    0,
-                                    4
-                                  )}
-                            </BigYear>{" "}
-                          </BigInfoBox>
-                          <BigInfoBox>
-                            <BigInfoTitle>Genres</BigInfoTitle>
-                            <BigGenres genreCount={detailData?.genres.length!}>
-                              {detailData?.genres.length === 0 ? (
-                                <BigGenre>None</BigGenre>
-                              ) : (
-                                detailData?.genres
-                                  .slice(0, 4)
-                                  .map((genre) => (
-                                    <BigGenre key={genre.id}>
-                                      {genre.name}
-                                    </BigGenre>
-                                  ))
-                              )}
-                            </BigGenres>{" "}
-                          </BigInfoBox>
-                        </BigInfoTop>
-                        <BigOverview>
-                          {clickedShow.overview.length === 0
-                            ? "No overview available"
-                            : clickedShow.overview.length > 550
-                            ? clickedShow.overview.substring(0, 550) + "..."
-                            : clickedShow.overview}
-                        </BigOverview>
-                      </BigRightSection>
-                    </>
-                  )}
-                </BigMovieContainer>
-              </>
+                          {detailData?.homepage !== "" && (
+                            <BigWebsite
+                              as="a"
+                              href={detailData?.homepage}
+                              target="_blank"
+                            >
+                              Homepage
+                            </BigWebsite>
+                          )}
+                        </BigLeftSection>
+                        <BigRightSection>
+                          <BigTitle>
+                            <span>{clickedShow.title || clickedShow.name}</span>
+                          </BigTitle>
+                          <BigInfoTop>
+                            <BigInfoBox>
+                              <BigInfoTitle>Score</BigInfoTitle>
+                              <BigRating rating={clickedShow.vote_average}>
+                                {clickedShow.vote_average}
+                              </BigRating>
+                            </BigInfoBox>
+                            <BigInfoBox>
+                              <BigInfoTitle>Year</BigInfoTitle>
+                              <BigYear>
+                                {sliderType === "movies"
+                                  ? String(detailData?.release_date).slice(0, 4)
+                                  : String(detailData?.first_air_date).slice(
+                                      0,
+                                      4
+                                    )}
+                              </BigYear>{" "}
+                            </BigInfoBox>
+                            <BigInfoBox>
+                              <BigInfoTitle>Genres</BigInfoTitle>
+                              <BigGenres
+                                genreCount={detailData?.genres.length!}
+                              >
+                                {detailData?.genres.length === 0 ? (
+                                  <BigGenre>None</BigGenre>
+                                ) : (
+                                  detailData?.genres
+                                    .slice(0, 4)
+                                    .map((genre) => (
+                                      <BigGenre key={genre.id}>
+                                        {genre.name}
+                                      </BigGenre>
+                                    ))
+                                )}
+                              </BigGenres>{" "}
+                            </BigInfoBox>
+                          </BigInfoTop>
+                          <BigOverview>
+                            {clickedShow.overview.length === 0
+                              ? "No overview available"
+                              : clickedShow.overview.length > 550
+                              ? clickedShow.overview.substring(0, 550) + "..."
+                              : clickedShow.overview}
+                          </BigOverview>
+                        </BigRightSection>
+                      </>
+                    )}
+                  </BigMovieContainer>
+                </>
+              )
             )}
           </BigMovie>
         </>

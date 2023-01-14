@@ -29,3 +29,13 @@ export const bigInfoOpenState = atom({
   key: "bigInfoOpen",
   default: false,
 });
+
+export const gridBackState = atom({
+  key: "gridBack",
+  default: false,
+});
+
+export const gridLeavingState = atom({
+  key: "gridLeaving",
+  default: false,
+});

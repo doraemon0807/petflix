@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import BigInfo from "./Components/BigInfo";
 import GridComponent from "./Components/GridComponent";
+import ErrorPage from "./Routes/ErrorPage";
 import Movies from "./Routes/Movies";
 import Search from "./Routes/Search";
 import TvShows from "./Routes/TvShows";
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
   {
     path: `${URL}`,
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "",
@@ -28,6 +30,10 @@ const router = createBrowserRouter([
           },
           {
             path: "popular/:showId",
+            element: <BigInfo />,
+          },
+          {
+            path: "topRated/:showId",
             element: <BigInfo />,
           },
           {
@@ -51,6 +57,10 @@ const router = createBrowserRouter([
           },
           {
             path: "topRated/:showId",
+            element: <BigInfo />,
+          },
+          {
+            path: "airingToday/:showId",
             element: <BigInfo />,
           },
         ],

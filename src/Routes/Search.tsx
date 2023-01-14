@@ -1,17 +1,11 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { getSearch, IGetShowResult } from "../api";
 import styled from "styled-components";
 import { Underbar } from "../Components/Header";
 import Loading from "../Components/Loading";
+import { motion } from "framer-motion";
 
 const SearchWrapper = styled.div`
   display: flex;
@@ -49,35 +43,40 @@ const SearchUnderbar = styled(Underbar)`
   bottom: 0;
 `;
 
+const GridWrapper = styled(motion.div)``;
+
 function Search() {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const keyword = new URLSearchParams(search).get("keyword");
   const currentPage = new URLSearchParams(search).get("page");
 
-  const {
-    data: searchMovie,
-    isLoading: searchMovieLoading,
-    refetch: searchMovieRefetch,
-  } = useQuery<IGetShowResult>(["movie", "search"], () => {
-    return getSearch("movie", keyword || "", +currentPage! || 1);
-  });
+  const SearchQueries = () => {
+    const movie = useQuery<IGetShowResult>(["movie", "search"], () => {
+      return getSearch("movie", keyword || "", +currentPage! || 1);
+    });
+    const tv = useQuery<IGetShowResult>(["tv", "search"], () => {
+      return getSearch("tv", keyword || "", +currentPage! || 1);
+    });
+    return [movie, tv];
+  };
+
+  const [
+    {
+      data: searchMovie,
+      isLoading: searchMovieLoading,
+      refetch: searchMovieRefetch,
+    },
+    { data: searchTv, isLoading: searchTvLoading, refetch: searchTvRefetch },
+  ] = SearchQueries();
 
   useEffect(() => {
     searchMovieRefetch();
-  }, [search]);
-
-  const {
-    data: searchTv,
-    isLoading: searchTvLoading,
-    refetch: searchTvRefetch,
-  } = useQuery<IGetShowResult>(["tv", "search"], () => {
-    return getSearch("tv", keyword || "", +currentPage! || 1);
-  });
+  }, [search, searchMovieRefetch]);
 
   useEffect(() => {
     searchTvRefetch();
-  }, [search]);
+  }, [search, searchTvRefetch]);
 
   if (
     parseInt(currentPage!) < 1 ||
@@ -118,8 +117,11 @@ function Search() {
               </SearchTypeTab>
             </SearchTypeTabs>
           </SearchHeader>
-          {searchMovieMatch && <Outlet context={searchMovie} />}
-          {searchTvMatch && <Outlet context={searchTv} />}
+
+          <GridWrapper>
+            {searchMovieMatch && <Outlet context={searchMovie} />}
+            {searchTvMatch && <Outlet context={searchTv} />}
+          </GridWrapper>
         </SearchWrapper>
       )}
     </>

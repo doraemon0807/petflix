@@ -75,7 +75,7 @@ function BannerComponent(data: IPropData) {
 
   useEffect(() => {
     setSliderType(data.sliderType);
-  }, [data.sliderType]);
+  }, [data.sliderType, setSliderType]);
 
   const navigate = useNavigate();
   const [playAnimation, setPlayAnimation] = useState(false);

@@ -70,12 +70,14 @@ export interface IPropData {
 export function getMovies(category: string) {
   return axios
     .get(`${BASE_PATH}/movie/${category}?api_key=${API_KEY}`)
+    .catch((error) => error)
     .then((res) => res.data);
 }
 
 export function getTvs(category: string) {
   return axios
     .get(`${BASE_PATH}/tv/${category}?api_key=${API_KEY}&language=en-US`)
+    .catch((error) => error)
     .then((res) => res.data);
 }
 
@@ -84,5 +86,6 @@ export function getSearch(type: string, keyword: string, currentPage: number) {
     .get(
       `${BASE_PATH}/search/${type}?api_key=${API_KEY}&language=en-US&query=${keyword}&page=${currentPage}`
     )
+    .catch((error) => error)
     .then((res) => res.data);
 }

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { getMovies, IGetShowResult } from "../api";
@@ -23,24 +24,45 @@ function Movies() {
   const bigInfoOpen = useRecoilValue(bigInfoOpenState);
   const location = useLocation();
 
-  const { data: nowPlayingData, isLoading: nowPlayingLoading } =
-    useQuery<IGetShowResult>(["movies", "nowPlaying"], () => {
-      return getMovies("now_playing");
-    });
-
-  const { data: popularData, isLoading: popularLoading } =
-    useQuery<IGetShowResult>(["movies", "popular"], () => {
+  const MovieQueries = () => {
+    const nowPlaying = useQuery<IGetShowResult>(
+      ["movies", "nowPlaying"],
+      () => {
+        return getMovies("now_playing");
+      }
+    );
+    const popular = useQuery<IGetShowResult>(["movies", "popular"], () => {
       return getMovies("popular");
     });
 
-  const { data: upcomingData, isLoading: upcomingLoading } =
-    useQuery<IGetShowResult>(["movies", "upcoming"], () => {
+    const topRated = useQuery<IGetShowResult>(["movies", "topRated"], () => {
+      return getMovies("top_rated");
+    });
+
+    const upcoming = useQuery<IGetShowResult>(["movies", "upcoming"], () => {
       return getMovies("upcoming");
     });
 
+    return [nowPlaying, popular, topRated, upcoming];
+  };
+
+  const [
+    { data: nowPlayingData, isLoading: nowPlayingLoading },
+    { data: popularData, isLoading: popularLoading },
+    { data: topRatedData, isLoading: topRatedLoading },
+    { data: upcomingData, isLoading: upcomingLoading },
+  ] = MovieQueries();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <Wrapper>
-      {nowPlayingLoading || popularLoading || upcomingLoading ? (
+      {nowPlayingLoading ||
+      popularLoading ||
+      topRatedLoading ||
+      upcomingLoading ? (
         <Loading />
       ) : (
         <>
@@ -63,6 +85,12 @@ function Movies() {
               rowType="popular"
             />
             <SliderComponent
+              data={topRatedData}
+              title="Top-Rated"
+              sliderType="movies"
+              rowType="topRated"
+            />
+            <SliderComponent
               data={upcomingData}
               title="Coming Soon"
               sliderType="movies"
@@ -77,6 +105,8 @@ function Movies() {
                   ? nowPlayingData
                   : location.pathname.includes("movies/popular")
                   ? popularData
+                  : location.pathname.includes("movies/topRated")
+                  ? topRatedData
                   : location.pathname.includes("movies/upcoming")
                   ? upcomingData
                   : null

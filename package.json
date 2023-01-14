@@ -55,6 +55,7 @@
   },
   "homepage": "https://doraemon0807.github.io/petflix",
   "devDependencies": {
-    "@types/react-helmet": "^6.1.6"
+    "@types/react-helmet": "^6.1.6",
+    "@types/react-router-dom": "^5.3.3"
   }
 }

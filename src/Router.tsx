@@ -7,12 +7,12 @@ import Movies from "./Routes/Movies";
 import Search from "./Routes/Search";
 import TvShows from "./Routes/TvShows";
 
-export const URL =
-  process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL : "/";
+export const rootUrl =
+  process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL + "/" : "/";
 
 const router = createBrowserRouter([
   {
-    path: `${URL}`,
+    path: `${rootUrl}`,
     element: <App />,
     errorElement: <ErrorPage />,
     children: [

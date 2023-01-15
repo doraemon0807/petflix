@@ -263,7 +263,6 @@ function BigInfo() {
   const { data: bigErrorData } = useQuery<IShow>(["movies", "bigError"], () => {
     return getMovies("349112");
   });
-
   return (
     <AnimatePresence>
       {showId && (

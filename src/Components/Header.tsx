@@ -5,6 +5,7 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { searchOpenState } from "../atom";
+import { rootUrl } from "../Router";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -125,8 +126,8 @@ interface IForm {
 function Header() {
   const [searchOpen, setSearchOpen] = useRecoilState(searchOpenState);
 
-  const homeMatch = useMatch("");
-  const tvMatch = useMatch("tv");
+  const homeMatch = useMatch(`${rootUrl}`);
+  const tvMatch = useMatch(`${rootUrl}/tv`);
 
   const navAnimation = useAnimation();
 
@@ -147,7 +148,7 @@ function Header() {
   const navigate = useNavigate();
   const { register, handleSubmit, setValue } = useForm<IForm>();
   const onValid = ({ keyword }: IForm) => {
-    navigate(`/search/movies?keyword=${keyword}&page=1`);
+    navigate(`search/movies?keyword=${keyword}&page=1`);
     setValue("keyword", "");
   };
 

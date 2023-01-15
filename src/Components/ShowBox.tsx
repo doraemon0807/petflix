@@ -9,6 +9,7 @@ import {
   tvDataState,
   bigInfoOpenState,
 } from "../atom";
+import { rootUrl } from "../Router";
 import { makeImagePath } from "../utils";
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -88,7 +89,9 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
     switch (slideGrid) {
       case "slide":
         navigate(
-          `/${sliderType === "movies" ? "movies" : "tv"}/${rowType}/${id}`
+          `${rootUrl}${
+            sliderType === "movies" ? "movies" : "tv"
+          }/${rowType}/${id}`
         );
         sliderType === "movies"
           ? setMovieRowType(rowType)
@@ -113,7 +116,7 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
     <Box
       layoutId={
         slideGrid === "slide"
-          ? `/${data?.sliderType}/${rowType}/${show.id}`
+          ? `${rootUrl}${data?.sliderType}/${rowType}/${show.id}`
           : `${location.pathname}/${show.id}`
       }
       key={`${show.id}`}

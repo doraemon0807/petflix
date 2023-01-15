@@ -89,6 +89,10 @@ function Search() {
   const searchMovieMatch = pathname.includes("/search/movies");
   const searchTvMatch = pathname.includes("/search/tv");
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <>
       {searchMovieLoading || searchTvLoading ? (

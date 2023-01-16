@@ -217,8 +217,8 @@ const BigErrorButton = styled(ErrorButton)``;
 
 function BigInfo() {
   const navigate = useNavigate();
-  const onOverlayClick = () => {
-    navigate(-1);
+  const onOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    error ? event.preventDefault() : navigate(-1);
   };
 
   const [error, setError] = useState(false);

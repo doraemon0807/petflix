@@ -127,7 +127,7 @@ function Header() {
   const [searchOpen, setSearchOpen] = useRecoilState(searchOpenState);
 
   const homeMatch = useMatch(`${rootUrl}`);
-  const tvMatch = useMatch(`${rootUrl}/tv`);
+  const tvMatch = useMatch(`${rootUrl}tv`);
 
   const navAnimation = useAnimation();
 

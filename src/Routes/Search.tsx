@@ -6,6 +6,8 @@ import styled from "styled-components";
 import { Underbar } from "../Components/Header";
 import Loading from "../Components/Loading";
 import { motion } from "framer-motion";
+import { useSetRecoilState } from "recoil";
+import { gridBackState } from "../atom";
 
 const SearchWrapper = styled.div`
   display: flex;
@@ -37,6 +39,26 @@ const SearchTypeTab = styled.div`
   margin-right: 20px;
   padding: 10px;
   position: relative;
+  a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+`;
+
+const SearchType = styled.div`
+  display: flex;
+  margin-right: 10px;
+`;
+
+const SearchCount = styled.div`
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 3px 5px;
+  color: ${(props) => props.theme.white.darker};
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 5px;
 `;
 
 const SearchUnderbar = styled(Underbar)`
@@ -50,6 +72,7 @@ function Search() {
   const { pathname, search } = useLocation();
   const keyword = new URLSearchParams(search).get("keyword");
   const currentPage = new URLSearchParams(search).get("page");
+  const setGridBack = useSetRecoilState(gridBackState);
 
   const SearchQueries = () => {
     const movie = useQuery<IGetShowResult>(["movie", "search"], () => {
@@ -105,7 +128,8 @@ function Search() {
             <SearchTypeTabs>
               <SearchTypeTab>
                 <Link to={`movies?keyword=${keyword}&page=1`}>
-                  Movies ({searchMovie?.total_results!})
+                  <SearchType>Movies</SearchType>
+                  <SearchCount>{searchMovie?.total_results!}</SearchCount>
                   {searchMovieMatch && (
                     <SearchUnderbar layoutId="searchUnderbar" />
                   )}
@@ -113,7 +137,8 @@ function Search() {
               </SearchTypeTab>
               <SearchTypeTab>
                 <Link to={`tv?keyword=${keyword}&page=1`}>
-                  TV Shows ({searchTv?.total_results!})
+                  <SearchType>TV Shows</SearchType>{" "}
+                  <SearchCount>{searchTv?.total_results!}</SearchCount>
                   {searchTvMatch && (
                     <SearchUnderbar layoutId="searchUnderbar" />
                   )}

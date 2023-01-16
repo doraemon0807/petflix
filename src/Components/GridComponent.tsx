@@ -26,6 +26,25 @@ const GridShows = styled(motion.div)<{ offset: number }>`
   right: 100px;
 `;
 
+const GridNoResult = styled.div`
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const GridNoResultTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+`;
+
+const GridNoResultSpan = styled.span`
+  font-size: 18px;
+`;
+
 function GridComponent() {
   const { search } = useLocation();
   const data = useOutletContext<IGetShowResult>();
@@ -40,11 +59,13 @@ function GridComponent() {
 
   const gridSliderVariants = {
     initial: (back: boolean) => ({
-      x: back ? -width : width,
+      x: back ? -(width + 100) : width + 100,
+      rotateY: 120,
     }),
-    animate: { x: 0 },
+    animate: { x: 0, rotateY: 0 },
     exit: (back: boolean) => ({
-      x: back ? width : -width,
+      x: back ? width + 100 : -(width + 100),
+      rotateY: 120,
     }),
   };
 
@@ -57,26 +78,38 @@ function GridComponent() {
       {data.total_pages > 0 && <PagesNavigation />}
       <GridWrapper>
         <AnimatePresence onExitComplete={() => setGridLeaving(false)}>
-          <GridShows
-            key={index}
-            variants={gridSliderVariants}
-            custom={gridBack}
-            initial={"initial"}
-            animate={"animate"}
-            exit={"exit"}
-            transition={{ type: "tween", duration: 1 }}
-            offset={gridOffset}
-          >
-            {data?.results.map((show, idx) => (
-              <ShowBox
-                key={idx}
-                show={show}
-                idx={idx}
-                offset={gridOffset}
-                slideGrid="grid"
-              />
-            ))}
-          </GridShows>
+          {data.total_results === 0 ? (
+            <GridNoResult>
+              <GridNoResultTitle>Hmmm</GridNoResultTitle>
+              <GridNoResultSpan>
+                We were not able to find a match.
+              </GridNoResultSpan>
+              <GridNoResultSpan>
+                Please try using more generic search terms.
+              </GridNoResultSpan>
+            </GridNoResult>
+          ) : (
+            <GridShows
+              key={index}
+              variants={gridSliderVariants}
+              custom={gridBack}
+              initial={"initial"}
+              animate={"animate"}
+              exit={"exit"}
+              transition={{ type: "tween", duration: 1 }}
+              offset={gridOffset}
+            >
+              {data?.results.map((show, idx) => (
+                <ShowBox
+                  key={idx}
+                  show={show}
+                  idx={idx}
+                  offset={gridOffset}
+                  slideGrid="grid"
+                />
+              ))}
+            </GridShows>
+          )}
         </AnimatePresence>
       </GridWrapper>
 

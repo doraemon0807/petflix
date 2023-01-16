@@ -375,7 +375,7 @@ function BigInfo() {
                                       0,
                                       4
                                     )}
-                              </BigYear>{" "}
+                              </BigYear>
                             </BigInfoBox>
                             <BigInfoBox>
                               <BigInfoTitle>Genres</BigInfoTitle>

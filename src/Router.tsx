@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import App from "./App";
 import BigInfo from "./Components/BigInfo";
 import GridComponent from "./Components/GridComponent";
@@ -7,10 +7,9 @@ import Movies from "./Routes/Movies";
 import Search from "./Routes/Search";
 import TvShows from "./Routes/TvShows";
 
-export const rootUrl =
-  process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL + "/" : "/";
+export const rootUrl = "/";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: `${rootUrl}`,
     element: <App />,

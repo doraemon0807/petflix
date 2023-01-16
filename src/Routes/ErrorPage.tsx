@@ -75,14 +75,18 @@ const ErrorCodeStatus = styled.span`
   font-weight: 600;
 `;
 
-interface IError {
-  data: string;
-  internal: boolean;
-  status: number;
-  statusText: string;
+export interface IError {
+  data?: string;
+  internal?: boolean;
+  status?: number;
+  statusText?: string;
 }
 
-function ErrorPage() {
+interface IErrorCode {
+  errorCode?: string;
+}
+
+function ErrorPage(data: IErrorCode) {
   const error = useRouteError() as IError;
 
   const { data: errorData, isLoading: errorLoading } = useQuery<IShow>(
@@ -114,7 +118,9 @@ function ErrorPage() {
 
             <ErrorCode>
               <ErrorCodeHeader>Error Code</ErrorCodeHeader>
-              <ErrorCodeStatus>{error.status}</ErrorCodeStatus>
+              <ErrorCodeStatus>
+                {data.errorCode || error.status}
+              </ErrorCodeStatus>
             </ErrorCode>
           </ErrorContainer>
         </ErrorWrapper>

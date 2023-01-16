@@ -1,13 +1,12 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { getSearch, IGetShowResult } from "../api";
 import styled from "styled-components";
 import { Underbar } from "../Components/Header";
 import Loading from "../Components/Loading";
 import { motion } from "framer-motion";
-import { useSetRecoilState } from "recoil";
-import { gridBackState } from "../atom";
+import ErrorPage from "./ErrorPage";
 
 const SearchWrapper = styled.div`
   display: flex;
@@ -68,11 +67,9 @@ const SearchUnderbar = styled(Underbar)`
 const GridWrapper = styled(motion.div)``;
 
 function Search() {
-  const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const keyword = new URLSearchParams(search).get("keyword");
   const currentPage = new URLSearchParams(search).get("page");
-  const setGridBack = useSetRecoilState(gridBackState);
 
   const SearchQueries = () => {
     const movie = useQuery<IGetShowResult>(["movie", "search"], () => {
@@ -101,14 +98,6 @@ function Search() {
     searchTvRefetch();
   }, [search, searchTvRefetch]);
 
-  if (
-    parseInt(currentPage!) < 1 ||
-    (parseInt(currentPage!) !== 1 &&
-      parseInt(currentPage!) > searchMovie?.total_pages!)
-  ) {
-    navigate(-1);
-  }
-
   const searchMovieMatch = pathname.includes("/search/movies");
   const searchTvMatch = pathname.includes("/search/tv");
 
@@ -120,6 +109,10 @@ function Search() {
     <>
       {searchMovieLoading || searchTvLoading ? (
         <Loading />
+      ) : parseInt(currentPage!) < 1 ||
+        (parseInt(currentPage!) !== 1 &&
+          parseInt(currentPage!) > searchMovie?.total_pages!) ? (
+        <ErrorPage errorCode="204" />
       ) : (
         <SearchWrapper>
           <SearchHeader>

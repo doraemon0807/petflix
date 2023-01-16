@@ -156,7 +156,7 @@ function Header() {
     <Nav variants={navVariant} initial={"top"} animate={navAnimation}>
       <Col>
         <Logo>
-          <Link to="">
+          <Link to="/">
             <Svg
               variants={logoVariant}
               initial="normal"
@@ -178,13 +178,13 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="">
+            <Link to="/">
               Movies
               {homeMatch && <Underbar layoutId="underbar" />}
             </Link>
           </Item>
           <Item>
-            <Link to="tv">
+            <Link to="/tv">
               TV Shows
               {tvMatch && <Underbar layoutId="underbar" />}
             </Link>

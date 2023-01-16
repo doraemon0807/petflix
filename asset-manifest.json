@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/petflix/static/js/main.c26f9d34.js",
+    "main.js": "/petflix/static/js/main.c4917c5a.js",
     "index.html": "/petflix/index.html",
-    "main.c26f9d34.js.map": "/petflix/static/js/main.c26f9d34.js.map"
+    "main.c4917c5a.js.map": "/petflix/static/js/main.c4917c5a.js.map"
   },
   "entrypoints": [
-    "static/js/main.c26f9d34.js"
+    "static/js/main.c4917c5a.js"
   ]
 }

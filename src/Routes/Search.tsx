@@ -110,8 +110,12 @@ function Search() {
       {searchMovieLoading || searchTvLoading ? (
         <Loading />
       ) : parseInt(currentPage!) < 1 ||
-        (parseInt(currentPage!) !== 1 &&
-          parseInt(currentPage!) > searchMovie?.total_pages!) ? (
+        (searchMovieMatch &&
+          parseInt(currentPage!) !== 1 &&
+          parseInt(currentPage!) > searchMovie?.total_pages!) ||
+        (searchTvMatch &&
+          parseInt(currentPage!) !== 1 &&
+          parseInt(currentPage!) > searchTv?.total_pages!) ? (
         <ErrorPage errorCode="204" />
       ) : (
         <SearchWrapper>

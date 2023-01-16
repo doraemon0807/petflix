@@ -123,6 +123,8 @@ function ShowBox({ show, idx, offset, rowType, slideGrid, data }: IShowBox) {
       bgphoto={
         show.backdrop_path
           ? makeImagePath(show.backdrop_path, "w500")
+          : show.poster_path
+          ? makeImagePath(show.poster_path)
           : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
       }
       onClick={() => onBoxClicked(show.id!, rowType!)}

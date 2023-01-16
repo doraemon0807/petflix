@@ -299,6 +299,8 @@ function BigInfo() {
                       backgroundImage: `linear-gradient(to top, black, transparent), url(${
                         clickedShow.backdrop_path
                           ? makeImagePath(clickedShow.backdrop_path, "w500")
+                          : clickedShow.poster_path
+                          ? makeImagePath(clickedShow.poster_path)
                           : "https://assets.brand.microsites.netflix.io/assets/2800a67c-4252-11ec-a9ce-066b49664af6_cm_800w.jpg?v=4"
                       })`,
                     }}
